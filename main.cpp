@@ -173,7 +173,7 @@ int tmain(int argc, char **argv, char **envp) {
 
     typedef T search_val_t;
 
-    pid_t pid = atoi(argv[1]);
+    //pid_t pid = atoi(argv[1]);
     rx_search_value_type *value_type = new rx_search_typed_value_type<T>();
     g_engine->set_search_value_type(value_type);
 

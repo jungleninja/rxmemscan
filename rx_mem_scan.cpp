@@ -270,7 +270,8 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
                 data_pt old_region_data_p = NULL;
                 if (_unknown_last_search_val) {
                     old_region_data_p = new data_t[region.size];
-                    int result = LZ4_decompress_fast((const char *) region.compressed_region_data, (char *) old_region_data_p, region.size);
+                    // int result =
+                    LZ4_decompress_fast((const char *) region.compressed_region_data, (char *) old_region_data_p, region.size);
                     // TODO process result
                 }
 
