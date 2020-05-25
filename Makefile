@@ -1,8 +1,10 @@
+export THEOS_DEVICE_IP = 192.168.0.107
+
 include $(THEOS)/makefiles/common.mk
 
 ARCHS = armv7 arm64
 TOOL_NAME = rxmemscan
-TARGET_CODESIGN = /usr/local/Cellar/ldid/1.2.1/bin/ldid
+TARGET_CODESIGN = /usr/local/Cellar/ldid/1.2.1_1/bin/ldid
 TARGET_CODESIGN_FLAGS = -Sent.xml
 ADDITIONAL_CFLAGS += -Imissing_headers -include Prefix.pch -Wno-c++11-extensions
 ADDITIONAL_LDFLAGS += -lreadline -lncurses
