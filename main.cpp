@@ -24,10 +24,11 @@ typedef enum {
     kRXValueTypeSInt32,
     kRXValueTypeSInt64,
     kRXValueTypeFloat32,
-    kRXValueTypeFloat64
+    kRXValueTypeFloat64,
+    kRXValueTypeString
 } _vt ;
 
-#define _vtcount  10
+#define _vtcount  11
 static const char * _vtdescs[_vtcount * 2] = {
         "uint8",    "unsigned 1 byte value",
         "uint16",   "unsigned 2 bytes value",
@@ -38,7 +39,8 @@ static const char * _vtdescs[_vtcount * 2] = {
         "int32",    "signed 4 bytes value",
         "int64",    "signed 8 bytes value",
         "float32",  "4 bytes float value",
-        "float64",  "8 bytes float value"
+        "float64",  "8 bytes float value",
+        "string",   "ascii/unicode string"
 };
 #define _vtname(idx) (_vtdescs[idx*2])
 #define _vtdesc(idx) (_vtdescs[idx*2+1])
@@ -201,6 +203,11 @@ int tmain(int argc, char **argv, char **envp) {
                 _print_search_result(result);
             }
         } else if (command == "fuzzy" || command == "f") {
+            if (std::is_same<T, std::string>::value) {
+                printf("String does not support this operation.\n");
+                continue;
+            }
+
             if (g_engine->is_idle()) {
                 printf("Begin first fuzzy search...\n");
                 search_result_t result = g_engine->first_fuzzy_search();
@@ -272,6 +279,11 @@ int tmain(int argc, char **argv, char **envp) {
                 delete page;
             }
         } else if (command == "write" || command == "w") {
+            if (std::is_same<T, std::string>::value) {
+                printf("String does not support this operation.\n");
+                continue;
+            }
+
             if (_checkarg(1, args, "address") && _checkarg(2, args, "value")) {
                 vm_address_t address = str_to_address(args[1]);
                 search_val_t new_value = _cast<search_val_t>(args[2]);
@@ -313,7 +325,7 @@ int main(int argc, char **argv, char **envp) {
         g_engine->reset();
 
         printf("Type [x] to select search value type.\n");
-        for (int i = 0; i < _vtcount; ++i) {
+        for (int i = 0; i< _vtcount; ++i) {
             printf("[%d] %s\t(%s)\n", i, _vtname(i), _vtdesc(i));
         }
 
@@ -342,6 +354,7 @@ int main(int argc, char **argv, char **envp) {
             case kRXValueTypeSInt64:    ret_val = tmain<int64_t>(argc, argv, envp);     break;
             case kRXValueTypeFloat32:   ret_val = tmain<float_t>(argc, argv, envp);     break;
             case kRXValueTypeFloat64:   ret_val = tmain<double_t>(argc, argv, envp);    break;
+            case kRXValueTypeString:    ret_val = tmain<string>(argc, argv, envp);      break;
             default: break;
         }
 
