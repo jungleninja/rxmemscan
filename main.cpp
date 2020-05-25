@@ -94,6 +94,7 @@ bool ask(std::string q) {
 
     return false;
 }
+
 void print_welcome() {
     _print_line_sep;
     printf("%s (%s) - by %s\n", RX_NAME, RX_VERSION, RX_COPYRIGHT);
@@ -128,7 +129,6 @@ void print_help() {
 }
 
 vm_address_t str_to_address(std::string &str) {
-
     vm_address_t address;
     std::stringstream ss;
     if (str.find("0x") == 0 || str.find("0X") == 0) {
@@ -140,7 +140,6 @@ vm_address_t str_to_address(std::string &str) {
     ss >> address;
 
     return address;
-
 }
 
 template <typename T>
@@ -155,7 +154,6 @@ T _cast(std::string &str) {
     T v;
     ss >> v;
     return v;
-
 }
 
 std::string _readline_str(const char *prefix) {
@@ -165,12 +163,10 @@ std::string _readline_str(const char *prefix) {
     return line_str;
 }
 
-
 static rx_mem_scan *g_engine = NULL;
 
 template <typename T>
 int tmain(int argc, char **argv, char **envp) {
-
     typedef T search_val_t;
 
     //pid_t pid = atoi(argv[1]);
@@ -179,7 +175,6 @@ int tmain(int argc, char **argv, char **envp) {
 
     std::string last_line;
     while (true) {
-
         std::string str_line = _readline_str(tty_prefix);
         if (str_line != last_line) {
             add_history(str_line.c_str());
@@ -206,15 +201,11 @@ int tmain(int argc, char **argv, char **envp) {
                 _print_search_result(result);
             }
         } else if (command == "fuzzy" || command == "f") {
-
             if (g_engine->is_idle()) {
-
                 printf("Begin first fuzzy search...\n");
                 search_result_t result = g_engine->first_fuzzy_search();
                 _print_search_result(result);
-
             } else {
-
                 if (_checkarg(1, args, "comparator type")) {
                     std::string ct_str = str_toupper(args[1]);
                     rx_compare_type ct;
@@ -236,7 +227,6 @@ int tmain(int argc, char **argv, char **envp) {
                     search_result_t result = g_engine->fuzzy_search(ct);
                     _print_search_result(result);
                 }
-
             }
         } else if (command == "reset" || command == "r") {
             if (g_engine->is_idle() ||
@@ -245,11 +235,9 @@ int tmain(int argc, char **argv, char **envp) {
                 g_engine->reset();
             }
         } else if (command == "list" || command == "l") {
-
             if (g_engine->is_idle() || g_engine->last_search_result().matched == 0) {
                 printf("Matched list is empty.\n");
             } else {
-
                 uint32_t page_size = 20;
                 uint32_t page_no = 0;
                 uint32_t total_page = ceil((float_t) g_engine->last_search_result().matched / (float_t) page_size);
@@ -282,9 +270,7 @@ int tmain(int argc, char **argv, char **envp) {
                 printf("---------------------------------------------------------\n");
 
                 delete page;
-
             }
-
         } else if (command == "write" || command == "w") {
             if (_checkarg(1, args, "address") && _checkarg(2, args, "value")) {
                 vm_address_t address = str_to_address(args[1]);
@@ -302,15 +288,12 @@ int tmain(int argc, char **argv, char **envp) {
         } else {
             printf("Unknown command \"%s\" type \"h\" to help.\n", command.c_str());
         }
-
     }
 
     return 0;
 }
 
-
 int main(int argc, char **argv, char **envp) {
-
     print_welcome();
 
     if (argc == 1) {
@@ -330,7 +313,7 @@ int main(int argc, char **argv, char **envp) {
         g_engine->reset();
 
         printf("Type [x] to select search value type.\n");
-        for (int i = 0; i< _vtcount; ++i) {
+        for (int i = 0; i < _vtcount; ++i) {
             printf("[%d] %s\t(%s)\n", i, _vtname(i), _vtdesc(i));
         }
 
@@ -366,7 +349,6 @@ int main(int argc, char **argv, char **envp) {
             printf("Bye!\n");
             break;
         }
-
     }
 
     return 0;
