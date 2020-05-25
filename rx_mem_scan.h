@@ -33,7 +33,6 @@ typedef struct {
     uint32_t matched;
 } search_result_t;
 
-
 class rx_region;
 
 typedef uint8_t                     raw_data_t;
@@ -172,7 +171,6 @@ class rx_search_typed_value_type : public rx_search_value_type {
 #define rx_in_range(v, b, e)        ((v)>=(b) && (v)<(e))
 
 class rx_mem_scan {
-
 public:
     rx_mem_scan();
     ~rx_mem_scan();
@@ -210,6 +208,5 @@ private:
     boolean_t                   _idle;
     rx_search_value_type *      _search_value_type_p;
 };
-
 
 #endif //RXMEMSCAN_RX_MEM_SCAN_MINI_H

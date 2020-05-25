@@ -80,7 +80,6 @@ void rx_mem_scan::set_search_value_type(rx_search_value_type *type_p) {
 }
 
 rx_memory_page_pt rx_mem_scan::page_of_memory(vm_address_t address, uint32_t page_size) {
-
     rx_memory_page_pt page = new rx_memory_page_t;
     page->addresses = new address_list_t;
     page->data_size = page_size * _search_value_type_p->size_of_value();
@@ -88,7 +87,6 @@ rx_memory_page_pt rx_mem_scan::page_of_memory(vm_address_t address, uint32_t pag
     data_pt page_data_itor_p = page->data;
 
     for (uint32_t i = 0; i < _regions_p->size(); ++i) {
-
         region_t region = (*_regions_p)[i];
         data_pt region_data_p = NULL;
         data_pt region_data_itor_p = NULL;
@@ -126,11 +124,9 @@ rx_memory_page_pt rx_mem_scan::page_of_memory(vm_address_t address, uint32_t pag
     }
 
     return page;
-
 }
 
 rx_memory_page_pt rx_mem_scan::page_of_matched(uint32_t page_no, uint32_t page_size) {
-
     rx_memory_page_pt page = new rx_memory_page_t;
     page->addresses = new address_list_t;
     page->data_size = page_size * _search_value_type_p->size_of_value();
@@ -142,7 +138,6 @@ rx_memory_page_pt rx_mem_scan::page_of_matched(uint32_t page_no, uint32_t page_s
     uint32_t region_idx_begin = 0;
     data_pt page_data_itor_p = page->data;
     for (uint32_t i = 0; i < _regions_p->size(); ++i) {
-
         region_t region = (*_regions_p)[i];
         uint32_t region_idx_end = region_idx_begin + region.matched_count;
 
@@ -181,15 +176,12 @@ rx_memory_page_pt rx_mem_scan::page_of_matched(uint32_t page_no, uint32_t page_s
         }
 
         region_idx_begin = region_idx_end;
-
     }
 
     ret:
 
     return page;
-
 }
-
 
 kern_return_t rx_mem_scan::write_val(vm_address_t address, search_val_pt val) {
     // TODO Check address is writable.
@@ -205,9 +197,7 @@ void rx_mem_scan::set_last_search_val(search_val_pt new_p) {
     memcpy(_last_search_val_p, new_p, _search_value_type_p->size_of_value());
 }
 
-
 search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type ct) {
-
     search_result_t     result              = { 0 };
     long                begin_time          = get_timestamp();
     bool                is_fuzzy_search     = rx_is_fuzzy_search_val(search_val_p);
@@ -226,7 +216,6 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
     }
 
     for (uint32_t i = 0; i < _regions_p->size(); ++i) {
-
         region_t region = (*_regions_p)[i];
         //printf("Region address: %p, region size: %d\n", (void *)region.address, (int)region.size);
         size_t size_of_value = _search_value_type_p->size_of_value();
@@ -237,7 +226,6 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
         kern_return_t ret = read_region(region_data_p, region, &raw_data_read_count);
 
         if (ret == KERN_SUCCESS) {
-
             matched_offs_pt matched_offs_p = new matched_offs_t;
 
             data_pt data_itor_p = region_data_p;
@@ -262,9 +250,7 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
                         idx += size_of_value;
                     }
                 }
-
             } else {
-
                 // Search again.
                 matched_offs_pt old_matched_offs = region.matched_offs;
                 data_pt old_region_data_p = NULL;
@@ -304,15 +290,12 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
                 if (_unknown_last_search_val) {
                     delete[] old_region_data_p;
                 }
-
             }
 
             free_region_memory(region);
 
             if (matched_count > 0) {
-
                 if (_unknown_last_search_val) {
-
                     // Compress matched region_data_p, using lz4. https://cyan4973.github.io/lz4/
                     const size_t max_compressed_data_size = LZ4_compressBound(region.size);
                     uint8_t *compressed_data = new uint8_t[max_compressed_data_size];
@@ -333,7 +316,6 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
 
                 used_regions->push_back(region);
             }
-
         }
 
         delete[] region_data_p;
@@ -355,9 +337,7 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
     return result;
 }
 
-
 matched_off_t rx_mem_scan::offset_of_matched_offsets(matched_offs_t &vec, uint32_t off_idx) {
-
     uint32_t v_idx = 0;
     uint32_t b_off_idx = 0;
     while (v_idx < vec.size()) {
@@ -406,7 +386,6 @@ inline void rx_mem_scan::free_region_memory(region_t &region) {
 }
 
 inline void rx_mem_scan::matched_offs_flush(matched_offs_context_t &ctx, matched_offs_t &vec) {
-
     if (ctx.bf_nn) {
         if (ctx.fc > 0) {
             add_matched_offs_multi(vec, ctx.bf, ctx.fc + 1);
@@ -416,7 +395,6 @@ inline void rx_mem_scan::matched_offs_flush(matched_offs_context_t &ctx, matched
         }
         ctx.bf_nn = false;
     }
-
 }
 
 inline void rx_mem_scan::add_matched_offs_multi(matched_offs_t &vec, matched_off_t bi, matched_off_ct ic) {
