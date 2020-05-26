@@ -187,9 +187,11 @@ int tmain(int argc, char **argv, char **envp) {
         std::string command = args[0];
 
         if (command == "exit") {
+            delete value_type;
             break;
         } else if (command == "retype") {
             if (ask("Are you sure?")) {
+                delete value_type;
                 printf("Re-select the search value type.\n");
                 return 1;
             } else {
@@ -236,8 +238,7 @@ int tmain(int argc, char **argv, char **envp) {
                 }
             }
         } else if (command == "reset" || command == "r") {
-            if (g_engine->is_idle() ||
-                    ask("Are you sure reset the engine state? This operation will be discard all search result.")) {
+            if (g_engine->is_idle() || ask("Are you sure reset the engine state? This operation will be discard all search result.")) {
                 printf("Search engine has reset.\n");
                 g_engine->reset();
             }
@@ -255,7 +256,7 @@ int tmain(int argc, char **argv, char **envp) {
                         printf("Invalid argument \"page_no\" %u, max is %u.\n", page_no, total_page);
                         continue;
                     }
-                    if (page_no > 0) page_no --;
+                    if (page_no > 0) page_no--;
                 }
 
                 uint32_t b = page_size * page_no;
@@ -354,7 +355,7 @@ int main(int argc, char **argv, char **envp) {
             case kRXValueTypeSInt64:    ret_val = tmain<int64_t>(argc, argv, envp);     break;
             case kRXValueTypeFloat32:   ret_val = tmain<float_t>(argc, argv, envp);     break;
             case kRXValueTypeFloat64:   ret_val = tmain<double_t>(argc, argv, envp);    break;
-            case kRXValueTypeString:    ret_val = tmain<string>(argc, argv, envp);      break;
+            case kRXValueTypeString:    ret_val = tmain<std::string>(argc, argv, envp); break;
             default: break;
         }
 
