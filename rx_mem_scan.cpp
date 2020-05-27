@@ -339,6 +339,7 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
 }
 
 void rx_mem_scan::search_str(const std::string &str) {
+    int matched_count = 0;
     long begin_time = get_timestamp();
 
     for (uint32_t i = 0; i < _regions_p->size(); ++i) {
@@ -349,14 +350,13 @@ void rx_mem_scan::search_str(const std::string &str) {
         kern_return_t ret = read_region(region_data_p, region, &raw_data_read_count);
 
         if (ret == KERN_SUCCESS) {
-            printf("Region address: %p, region size: %d, read count: %d\n", (void *)region.address, (int)region.size, raw_data_read_count);
+            //printf("Region address: %p, region size: %d, read count: %d\n", (void *)region.address, (int)region.size, (int)raw_data_read_count);
 
             data_pt data_itor_p = region_data_p;
-            int str_len = str.length();
-            int matched_count = 0;
+            int str_len = str.length();            
 
             while (raw_data_read_count >= str_len) {
-                data_pt str_itor_p = str.c_str();
+                data_pt str_itor_p = (data_pt)str.c_str();
                 bool found = true;
 
                 int i = 0;
@@ -375,7 +375,7 @@ void rx_mem_scan::search_str(const std::string &str) {
                 {
                     ++ matched_count;
 
-                    while (i < 20 && i < raw_data_read_count)
+                    while (i < 512 && i < raw_data_read_count)
                     {
                         if (0 == data_itor_p[i++]) // fast skip 0, for next compare
                         {
@@ -383,7 +383,7 @@ void rx_mem_scan::search_str(const std::string &str) {
                         }
                     }
 
-                    char str_buff[21];
+                    char str_buff[513];
                     memcpy(str_buff, data_itor_p, i);
                     str_buff[i] = 0;
 
@@ -406,8 +406,7 @@ void rx_mem_scan::search_str(const std::string &str) {
     }
 
     long end_time = get_timestamp();
-
-    _trace("Result count: %d, time used: %.3f(s)\n", matched_count, (float)(end_time - begin_time)/1000.0f);
+    printf("Result count: %d, time used: %.3f(s)\n", matched_count, (float)(end_time - begin_time)/1000.0f);
 }
 
 matched_off_t rx_mem_scan::offset_of_matched_offsets(matched_offs_t &vec, uint32_t off_idx) {

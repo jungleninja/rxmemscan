@@ -201,7 +201,7 @@ int tmain(int argc, char **argv, char **envp) {
             if (_checkarg(1, args, "search value")) {
                 printf("Begin search...\n");
                 if (std::is_same<T, std::string>::value) {
-                    g_engine->search_str(args[1])
+                    g_engine->search_str(args[1]);
                 } else {
                     search_val_t search_val = _cast<search_val_t>(args[1]);
                     search_result_t result = g_engine->search(&search_val, rx_compare_type_eq);

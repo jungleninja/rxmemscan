@@ -137,7 +137,7 @@ class rx_comparator_typed_gt : public rx_comparator {
 
 class rx_search_value_type {
 public:
-    ~rx_search_value_type() {}
+    virtual ~rx_search_value_type() {}
     virtual size_t size_of_value() = 0;
     virtual rx_comparator *create_comparator(rx_compare_type ct) = 0;
 };
