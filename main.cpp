@@ -86,7 +86,7 @@ std::string str_toupper(std::string &s) {
 }
 
 bool ask(std::string q) {
-    std::string msg = q + "[Y]es or [N]o : ";
+    std::string msg = q + " [Y]es or [N]o: ";
     char *line = readline(msg.c_str());
     std::string answer(line);
     free(line);
@@ -203,7 +203,7 @@ int tmain(int argc, char **argv, char **envp) {
             }
         } else if (command == "search" || command == "s") {
             if (_checkarg(1, args, "search value")) {
-                printf("Begin search...\n");
+                printf("Begin search ...\n");
                 if (std::is_same<T, std::string>::value) {
                     g_engine->search_str(args[1]);
                 } else {
@@ -340,14 +340,14 @@ int main(int argc, char **argv, char **envp) {
 
         printf("Type [x] to select search value type.\n");
         for (int i = 0; i < _vtcount; ++i) {
-            printf("[%d] %s\t(%s)\n", i, _vtname(i), _vtdesc(i));
+            printf("[%d] %s\t(%s)\n", i + 1, _vtname(i), _vtdesc(i));
         }
 
         std::string str_line = _readline_str(tty_prefix);
         if (str_line.length() == 0) {
             continue;
         }
-        _vt t = (_vt)_cast<int>(str_line);
+        _vt t = (_vt)(_cast<int>(str_line) - 1);
 
         if (!(t >= 0 && t < _vtcount)) {
             printf("Invalid type.\n");
