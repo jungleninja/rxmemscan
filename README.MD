@@ -35,3 +35,8 @@ Screenshots
 
 ![alt tag](https://raw.githubusercontent.com/rainyx/rxmemscan/master/screenshots/screenshot2.jpg)
 
+
+Search String (Add by LiuLiu.mz)
+-------------
+
+![alt tag](https://raw.githubusercontent.com/liumazi/rxmemscan/master/screenshots/screenshot3.png)
