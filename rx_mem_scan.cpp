@@ -218,6 +218,7 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
     for (uint32_t i = 0; i < _regions_p->size(); ++i) {
         region_t region = (*_regions_p)[i];
         //printf("Region address: %p, region size: %d\n", (void *)region.address, (int)region.size);
+
         size_t size_of_value = _search_value_type_p->size_of_value();
         size_t data_count = region.size / size_of_value;
 
@@ -267,7 +268,7 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
                     matched_off_ct old_matched_fc = 1;
                     if (rx_has_offc_mask(old_matched_bf)) {
                         old_matched_bf = rx_remove_offc_mask(old_matched_bf);
-                        old_matched_fc = (*old_matched_offs)[++ j];
+                        old_matched_fc = (*old_matched_offs)[++j];
                     }
 
                     matched_off_t old_matched_off = old_matched_bf;
@@ -335,6 +336,78 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
 
     _last_search_result = result;
     return result;
+}
+
+void rx_mem_scan::search_str(const std::string &str) {
+    long begin_time = get_timestamp();
+
+    for (uint32_t i = 0; i < _regions_p->size(); ++i) {
+        region_t region = (*_regions_p)[i];        
+
+        vm_size_t raw_data_read_count;
+        data_pt region_data_p = new data_t[region.size];
+        kern_return_t ret = read_region(region_data_p, region, &raw_data_read_count);
+
+        if (ret == KERN_SUCCESS) {
+            printf("Region address: %p, region size: %d, read count: %d\n", (void *)region.address, (int)region.size, raw_data_read_count);
+
+            data_pt data_itor_p = region_data_p;
+            int str_len = str.length();
+            int matched_count = 0;
+
+            while (raw_data_read_count >= str_len) {
+                data_pt str_itor_p = str.c_str();
+                bool found = true;
+
+                int i = 0;
+                while (i < str_len)
+                {
+                    if (data_itor_p[i] != str_itor_p[i])
+                    {
+                        found = false;
+                        break;
+                    }
+
+                    ++ i;
+                }
+
+                if (found)
+                {
+                    ++ matched_count;
+
+                    while (i < 20 && i < raw_data_read_count)
+                    {
+                        if (0 == data_itor_p[i++]) // fast skip 0, for next compare
+                        {
+                            break;
+                        }
+                    }
+
+                    char str_buff[21];
+                    memcpy(str_buff, data_itor_p, i);
+                    str_buff[i] = 0;
+
+                    printf("address: %p, string: %s\n", data_itor_p, str_buff);
+
+                    raw_data_read_count -= i;
+                    data_itor_p += i;
+                } else {
+                    raw_data_read_count -= 1;
+                    data_itor_p += 1;                    
+                }
+            }
+
+            // free_region_memory(region);
+        } else {
+            printf("Region address: %p, region size: %d, read failed\n", (void *)region.address, (int)region.size);
+        }
+
+        delete[] region_data_p;
+    }
+
+    long end_time = get_timestamp();
+
+    _trace("Result count: %d, time used: %.3f(s)\n", matched_count, (float)(end_time - begin_time)/1000.0f);
 }
 
 matched_off_t rx_mem_scan::offset_of_matched_offsets(matched_offs_t &vec, uint32_t off_idx) {

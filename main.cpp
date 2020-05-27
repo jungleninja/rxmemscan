@@ -200,9 +200,13 @@ int tmain(int argc, char **argv, char **envp) {
         } else if (command == "search" || command == "s") {
             if (_checkarg(1, args, "search value")) {
                 printf("Begin search...\n");
-                search_val_t search_val = _cast<search_val_t>(args[1]);
-                search_result_t result = g_engine->search(&search_val, rx_compare_type_eq);
-                _print_search_result(result);
+                if (std::is_same<T, std::string>::value) {
+                    g_engine->search_str(args[1])
+                } else {
+                    search_val_t search_val = _cast<search_val_t>(args[1]);
+                    search_result_t result = g_engine->search(&search_val, rx_compare_type_eq);
+                    _print_search_result(result);
+                }
             }
         } else if (command == "fuzzy" || command == "f") {
             if (std::is_same<T, std::string>::value) {
@@ -243,6 +247,11 @@ int tmain(int argc, char **argv, char **envp) {
                 g_engine->reset();
             }
         } else if (command == "list" || command == "l") {
+            if (std::is_same<T, std::string>::value) {
+                printf("String does not support this operation.\n");
+                continue;
+            }
+
             if (g_engine->is_idle() || g_engine->last_search_result().matched == 0) {
                 printf("Matched list is empty.\n");
             } else {
@@ -326,7 +335,7 @@ int main(int argc, char **argv, char **envp) {
         g_engine->reset();
 
         printf("Type [x] to select search value type.\n");
-        for (int i = 0; i< _vtcount; ++i) {
+        for (int i = 0; i < _vtcount; ++i) {
             printf("[%d] %s\t(%s)\n", i, _vtname(i), _vtdesc(i));
         }
 

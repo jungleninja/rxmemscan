@@ -187,6 +187,7 @@ public:
     kern_return_t write_val(vm_address_t address, search_val_pt val);
     void set_last_search_val(search_val_pt new_p);
     search_result_t search(search_val_pt search_val_p, rx_compare_type ct);
+    void search_str(const std::string &str);
     pid_t target_pid();
     mach_port_t target_task();
 private:
