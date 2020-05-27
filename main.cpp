@@ -178,6 +178,10 @@ int tmain(int argc, char **argv, char **envp) {
     std::string last_line;
     while (true) {
         std::string str_line = _readline_str(tty_prefix);
+        if (str_line.length() == 0)
+        {
+            continue;
+        }
         if (str_line != last_line) {
             add_history(str_line.c_str());
         }
@@ -339,11 +343,11 @@ int main(int argc, char **argv, char **envp) {
             printf("[%d] %s\t(%s)\n", i, _vtname(i), _vtdesc(i));
         }
 
-        std::string line_str = _readline_str(tty_prefix);
-        if (line_str.length() == 0) {
+        std::string str_line = _readline_str(tty_prefix);
+        if (str_line.length() == 0) {
             continue;
         }
-        _vt t = (_vt)_cast<int>(line_str);
+        _vt t = (_vt)_cast<int>(str_line);
 
         if (!(t >= 0 && t < _vtcount)) {
             printf("Invalid type.\n");
@@ -369,7 +373,7 @@ int main(int argc, char **argv, char **envp) {
         }
 
         if (ret_val == 0) {
-            printf("Bye!\n");
+            printf("Bye, Rx & Mz !\n");
             break;
         }
     }
