@@ -1,7 +1,7 @@
 Requirements
 ===================
  - [theos](https://github.com/theos/theos)
- - readline
+ - [readline](https://github.com/liumazi/libreadline-arm)
 
 
 Make & Install
@@ -36,7 +36,7 @@ Screenshots
 ![alt tag](https://raw.githubusercontent.com/rainyx/rxmemscan/master/screenshots/screenshot2.jpg)
 
 
-Search String (Add by LiuLiu.mz)
+Search String (add by LiuLiu.mz)
 -------------
 
 ![alt tag](https://raw.githubusercontent.com/liumazi/rxmemscan/master/screenshots/screenshot3.png)
