@@ -399,13 +399,13 @@ void rx_mem_scan::search_str(const std::string &str) {
                         -- j;
                     }
 
-                    char str_buff[256];
-
                     if (region.writable) {
                         printf("\e[1;32mAddress: %016llx\e[0m, string: ", data_itor_p - region_data_p + (uint64_t)region.address);
                     } else {
                         printf("\e[1;31mAddress: %016llx\e[0m, string: ", data_itor_p - region_data_p + (uint64_t)region.address);
                     }
+
+                    char str_buff[256];                    
                     
                     memcpy(str_buff, &data_itor_p[j + 1], -j - 1);
                     str_buff[-j - 1] = 0;
