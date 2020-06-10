@@ -87,6 +87,7 @@ public:
 
     vm_address_t address;
     vm_size_t size;
+    boolean_t writable;
 
     raw_data_pt compressed_region_data;
     size_t compressed_region_data_size;

@@ -65,7 +65,8 @@ static char _addfmtbuf[19] = { 0 };
 
 #define _print_search_result(r) (printf("Found %d result(s), memory used: %.4fMB time used: %.3fs\n", r.matched, (float)r.memory_used / (float)_1MB, (float) r.time_used / 1000.0f))
 #define _print_line_sep (printf("--------------------------------------------------------------\n"))
-std::vector<std::string> explode(std::string const &s, char delim)  {
+
+std::vector<std::string> explode(std::string const &s, char delim) {
     std::vector<std::string> result;
     std::istringstream iss(s);
     for (std::string s; std::getline(iss, s, delim); ) {

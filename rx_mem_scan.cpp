@@ -88,6 +88,10 @@ rx_memory_page_pt rx_mem_scan::page_of_memory(vm_address_t address, uint32_t pag
 
     for (uint32_t i = 0; i < _regions_p->size(); ++i) {
         region_t region = (*_regions_p)[i];
+        if (!region.writable) {
+            continue;
+        }
+
         data_pt region_data_p = NULL;
         data_pt region_data_itor_p = NULL;
 
@@ -139,6 +143,10 @@ rx_memory_page_pt rx_mem_scan::page_of_matched(uint32_t page_no, uint32_t page_s
     data_pt page_data_itor_p = page->data;
     for (uint32_t i = 0; i < _regions_p->size(); ++i) {
         region_t region = (*_regions_p)[i];
+        if (!region.writable) {
+            continue;
+        }
+
         uint32_t region_idx_end = region_idx_begin + region.matched_count;
 
         data_pt region_data_p = NULL;
@@ -217,6 +225,9 @@ search_result_t rx_mem_scan::search(search_val_pt search_val_p, rx_compare_type 
 
     for (uint32_t i = 0; i < _regions_p->size(); ++i) {
         region_t region = (*_regions_p)[i];
+        if (!region.writable) {
+            continue;
+        }
         //printf("Region address: %p, region size: %d\n", (void *)region.address, (int)region.size);
 
         size_t size_of_value = _search_value_type_p->size_of_value();
@@ -343,7 +354,7 @@ void rx_mem_scan::search_str(const std::string &str) {
     long begin_time = get_timestamp();
 
     for (uint32_t i = 0; i < _regions_p->size(); ++i) {
-        region_t region = (*_regions_p)[i];        
+        region_t region = (*_regions_p)[i];
 
         vm_size_t raw_data_read_count;
         data_pt region_data_p = new data_t[region.size];
@@ -390,13 +401,17 @@ void rx_mem_scan::search_str(const std::string &str) {
 
                     char str_buff[256];
 
-                    printf("\e[1;31mAddress: %p, string: \e[0m", data_itor_p);
+                    if (region.writable) {
+                        printf("\e[1;32mAddress: %p\e[0m, string: ", data_itor_p);
+                    } else {
+                        printf("\e[1;31mAddress: %p\e[0m, string: ", data_itor_p);
+                    }                    
                     
                     memcpy(str_buff, &data_itor_p[j + 1], -j - 1);
                     str_buff[-j - 1] = 0;
                     printf("%s", str_buff);
 
-                    printf("\e[0;32m%s\e[0m", str_itor_p);
+                    printf("\e[1;32m%s\e[0m", str_itor_p);
 
                     memcpy(str_buff, &data_itor_p[str_len], i - str_len);
                     str_buff[i - str_len] = 0;
@@ -523,24 +538,26 @@ void rx_mem_scan::init_regions() {
     struct proc_regioninfo region_info;
     kern_return_t ret;
     uint64_t addr = 0;
-    int count = 0;
 
     _regions_p = new regions_t();
     do {
         if (addr) {
-            boolean_t writable = (region_info.pri_protection & VM_PROT_DEFAULT) == VM_PROT_DEFAULT;
-
-            if (writable) {
+            if (region_info.pri_protection & VM_PROT_READ) {
                 region_t region;
+
                 region.address = region_info.pri_address;
                 region.size = region_info.pri_size;
+                region.writable = region_info.pri_protection & VM_PROT_WRITE;
+
                 _regions_p->push_back(region);
-                count ++;
+
+                _trace("%016llx - %016llx, %d, %d\n", region_info.pri_address, region_info.pri_address + region_info.pri_size, region.writable, region_info.pri_user_tag);
             }
         }
 
         ret = proc_pidinfo(_target_pid, PROC_PIDREGIONINFO, addr, &region_info, sizeof(region_info));
         addr = region_info.pri_address + region_info.pri_size;
     } while (ret == sizeof(region_info));
-    _trace("Writable region count: %d\n", (int)_regions_p->size());
+
+    _trace("Readable region count: %d\n", (int)_regions_p->size());
 }
