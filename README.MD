@@ -38,5 +38,9 @@ Screenshots
 
 Search String (add by LiuLiu.mz)
 -------------
-
 ![alt tag](https://raw.githubusercontent.com/liumazi/rxmemscan/master/screenshots/screenshot3.png)
+
+
+Mazi's Blog
+-------------
+https://blog.csdn.net/liumazi/article/details/106417276
