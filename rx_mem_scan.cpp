@@ -427,7 +427,7 @@ void rx_mem_scan::search_str(const std::string &str) {
 
             // free_region_memory(region);
         } else {
-            printf("Region address: %p, region size: %d, read failed\n", (void *)region.address, (int)region.size);
+            printf("\e[2;37mRegion address: %p, region size: %d, read failed\e[0m\n", (void *)region.address, (int)region.size);
         }
 
         delete[] region_data_p;
