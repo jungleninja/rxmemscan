@@ -402,9 +402,9 @@ void rx_mem_scan::search_str(const std::string &str) {
                     char str_buff[256];
 
                     if (region.writable) {
-                        printf("\e[1;32mAddress: %p\e[0m, string: ", data_itor_p);
+                        printf("\e[1;32mAddress: %016llx\e[0m, string: ", data_itor_p - region_data_p + (uint64_t)region.address);
                     } else {
-                        printf("\e[1;31mAddress: %p\e[0m, string: ", data_itor_p);
+                        printf("\e[1;31mAddress: %016llx\e[0m, string: ", data_itor_p - region_data_p + (uint64_t)region.address);
                     }
                     
                     memcpy(str_buff, &data_itor_p[j + 1], -j - 1);
@@ -427,7 +427,7 @@ void rx_mem_scan::search_str(const std::string &str) {
 
             // free_region_memory(region);
         } else {
-            printf("\e[2;37mRegion address: %p, region size: %d, read failed\e[0m\n", (void *)region.address, (int)region.size);
+            printf("\e[2;37mAddress: %016llx, region size: %d, read failed\e[0m\n", (uint64_t)region.address, (int)region.size);
         }
 
         delete[] region_data_p;
