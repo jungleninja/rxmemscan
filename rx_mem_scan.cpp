@@ -388,7 +388,7 @@ void rx_mem_scan::search_str(const std::string &str) {
 
                     while (i < 255 + str_len && i < raw_data_read_count)
                     {
-                        if (0 == data_itor_p[i++]) // fast skip 0, for next compare
+                        if (data_itor_p[i++] < 32) // fast skip invalid char, for next compare
                         {
                             break;
                         }
@@ -405,7 +405,7 @@ void rx_mem_scan::search_str(const std::string &str) {
                         printf("\e[1;32mAddress: %p\e[0m, string: ", data_itor_p);
                     } else {
                         printf("\e[1;31mAddress: %p\e[0m, string: ", data_itor_p);
-                    }                    
+                    }
                     
                     memcpy(str_buff, &data_itor_p[j + 1], -j - 1);
                     str_buff[-j - 1] = 0;
