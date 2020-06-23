@@ -373,7 +373,7 @@ void rx_mem_scan::search_str(const std::string &str) {
                 int i = 0;
                 while (i < str_len)
                 {
-                    if (data_itor_p[i] != str_itor_p[i])
+                    if (::toupper(data_itor_p[i]) != str_itor_p[i])
                     {
                         found = false;
                         break;
@@ -411,7 +411,9 @@ void rx_mem_scan::search_str(const std::string &str) {
                     str_buff[-j - 1] = 0;
                     printf("%s", str_buff);
 
-                    printf("\e[1;32m%s\e[0m", str_itor_p);
+                    memcpy(str_buff, &data_itor_p[0], str_len);
+                    str_buff[str_len] = 0;
+                    printf("\e[1;32m%s\e[0m", str_buff);
 
                     memcpy(str_buff, &data_itor_p[str_len], i - str_len);
                     str_buff[i - str_len] = 0;

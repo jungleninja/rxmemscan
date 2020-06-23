@@ -40,7 +40,7 @@ static const char * _vtdescs[_vtcount * 2] = {
         "int64",    "signed 8 bytes value",
         "float32",  "4 bytes float value",
         "float64",  "8 bytes float value",
-        "string",   "ascii/unicode string"
+        "string",   "ascii only & ignore case"
 };
 #define _vtname(idx) (_vtdescs[idx*2])
 #define _vtdesc(idx) (_vtdescs[idx*2+1])
@@ -206,7 +206,7 @@ int tmain(int argc, char **argv, char **envp) {
             if (_checkarg(1, args, "search value")) {
                 printf("Begin search ...\n");
                 if (std::is_same<T, std::string>::value) {
-                    g_engine->search_str(args[1]);
+                    g_engine->search_str(str_toupper(args[1]));
                 } else {
                     search_val_t search_val = _cast<search_val_t>(args[1]);
                     search_result_t result = g_engine->search(&search_val, rx_compare_type_eq);
